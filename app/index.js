@@ -57,6 +57,21 @@ var Generator = module.exports = function Generator(args, options) {
     this.env.options.coffee = this.options.coffee;
   }
 
+  if (typeof this.env.options.typescript === 'undefined') {
+    this.option('typescript', {
+      desc: 'Generate TypeScript instead of JavaScript'
+    });
+
+    // attempt to detect if user is using TS or not
+    // if cml arg provided, use that; else look for the existence of ts
+    if (!this.options.typescript &&
+      this.expandFiles(path.join(this.appPath, '/scripts/**/*.ts'), {}).length > 0) {
+      this.options.typescript = true;
+    }
+
+    this.env.options.typescript = this.options.typescript;
+  }
+
   this.hookFor('angular-php:common', {
     args: args
   });
@@ -70,6 +85,16 @@ var Generator = module.exports = function Generator(args, options) {
   });
 
   this.on('end', function () {
+    var jsExt = this.options.coffee ? 'coffee' : 'js';
+
+    var bowerComments = [
+      'bower:js',
+      'endbower'
+    ];
+    if (this.options.coffee) {
+      bowerComments.push('bower:coffee');
+      bowerComments.push('endbower');
+    }
 
     var enabledComponents = [];
 
@@ -111,6 +136,7 @@ var Generator = module.exports = function Generator(args, options) {
         'coffee': this.options.coffee,
         'travis': true,
         'bower-components': enabledComponents,
+        'files-comments': bowerComments.join(','),
         'app-files': 'app/scripts/**/*.' + jsExt,
         'test-files': [
           'test/mock/**/*.' + jsExt,
@@ -162,15 +188,43 @@ Generator.prototype.welcome = function welcome() {
   }
 };
 
-Generator.prototype.askForCompass = function askForCompass() {
+Generator.prototype.askForGulp = function askForGulp() {
   var cb = this.async();
 
   this.prompt([{
     type: 'confirm',
+    name: 'gulp',
+    message: 'Would you like to use Gulp (experimental) instead of Grunt?',
+    default: false
+  }], function (props) {
+    this.gulp = props.gulp;
+
+    cb();
+  }.bind(this));
+};
+
+Generator.prototype.askForStyles = function askForStyles() {
+  var gulp = this.gulp;
+  var cb = this.async();
+
+  this.prompt([{
+    type: 'confirm',
+    name: 'sass',
+    message: 'Would you like to use Sass?',
+    default: true,
+    when: function () {
+      return gulp;
+    }
+  }, {
+    type: 'confirm',
     name: 'compass',
     message: 'Would you like to use Sass (with Compass)?',
-    default: true
+    default: true,
+    when: function () {
+      return !gulp;
+    }
   }], function (props) {
+    this.sass = props.sass;
     this.compass = props.compass;
 
     cb();
@@ -179,6 +233,7 @@ Generator.prototype.askForCompass = function askForCompass() {
 
 Generator.prototype.askForBootstrap = function askForBootstrap() {
   var compass = this.compass;
+  var gulp = this.gulp;
   var cb = this.async();
 
   this.prompt([{
@@ -192,7 +247,7 @@ Generator.prototype.askForBootstrap = function askForBootstrap() {
     message: 'Would you like to use the Sass version of Bootstrap?',
     default: true,
     when: function (props) {
-      return props.bootstrap && compass;
+      return !gulp && (props.bootstrap && compass);
     }
   }], function (props) {
     this.bootstrap = props.bootstrap;
@@ -215,6 +270,10 @@ Generator.prototype.askForModules = function askForModules() {
       name: 'angular-animate.js',
       checked: true
     }, {
+      value: 'ariaModule',
+      name: 'angular-aria.js',
+      checked: false
+    }, {
       value: 'cookiesModule',
       name: 'angular-cookies.js',
       checked: true
@@ -222,6 +281,10 @@ Generator.prototype.askForModules = function askForModules() {
       value: 'resourceModule',
       name: 'angular-resource.js',
       checked: true
+    }, {
+      value: 'messagesModule',
+      name: 'angular-messages.js',
+      checked: false
     }, {
       value: 'routeModule',
       name: 'angular-route.js',
@@ -241,7 +304,9 @@ Generator.prototype.askForModules = function askForModules() {
   this.prompt(prompts, function (props) {
     var hasMod = function (mod) { return props.modules.indexOf(mod) !== -1; };
     this.animateModule = hasMod('animateModule');
+    this.ariaModule = hasMod('ariaModule');
     this.cookiesModule = hasMod('cookiesModule');
+    this.messagesModule = hasMod('messagesModule');
     this.resourceModule = hasMod('resourceModule');
     this.routeModule = hasMod('routeModule');
     this.sanitizeModule = hasMod('sanitizeModule');
@@ -253,8 +318,16 @@ Generator.prototype.askForModules = function askForModules() {
       angMods.push("'ngAnimate'");
     }
 
+    if (this.ariaModule) {
+      angMods.push("'ngAria'");
+    }
+
     if (this.cookiesModule) {
       angMods.push("'ngCookies'");
+    }
+
+    if (this.messagesModule) {
+      angMods.push("'ngMessages'");
     }
 
     if (this.resourceModule) {
@@ -288,8 +361,9 @@ Generator.prototype.readIndex = function readIndex() {
 };
 
 Generator.prototype.bootstrapFiles = function bootstrapFiles() {
-  var cssFile = 'styles/main.' + (this.compass ? 's' : '') + 'css';
-  this.copy(
+  var sass = this.compass || this.sass;
+  var cssFile = 'styles/main.' + (sass ? 's' : '') + 'css';
+   this.copy(
     path.join('app', cssFile),
     path.join(this.appPath, cssFile)
   );
@@ -312,34 +386,33 @@ Generator.prototype.createIndexHtml = function createIndexHtml() {
 
 Generator.prototype.packageFiles = function packageFiles() {
   this.coffee = this.env.options.coffee;
+  this.typescript = this.env.options.typescript;
   this.template('root/_bower.json', 'bower.json');
   this.template('root/_bowerrc', '.bowerrc');
   this.template('root/_package.json', 'package.json');
-  this.template('root/_Gruntfile.js', 'Gruntfile.js');
+  if (this.gulp) {
+    this.template('root/_gulpfile.js', 'gulpfile.js');
+  } else {
+    this.template('root/_Gruntfile.js', 'Gruntfile.js');
+  }
+  if (this.typescript) {
+    this.template('root/_tsd.json', 'tsd.json');
+  }
+  this.template('root/README.md', 'README.md');
+
 };
 
 Generator.prototype._injectDependencies = function _injectDependencies() {
+  var taskRunner = this.gulp ? 'gulp' : 'grunt';
   if (this.options['skip-install']) {
     this.log(
       'After running `npm install & bower install`, inject your front end dependencies' +
       '\ninto your source code by running:' +
       '\n' +
-      '\n' + chalk.yellow.bold('grunt wiredep')
+      '\n' + chalk.yellow.bold(taskRunner + ' wiredep')
     );
   } else {
-    wiredep({
-      directory: 'bower_components',
-      bowerJson: JSON.parse(fs.readFileSync('./bower.json')),
-      ignorePath: new RegExp('^(' + this.appPath + '|..)/'),
-      src: 'app/index.html',
-      fileTypes: {
-        html: {
-          replace: {
-            css: '<link rel="stylesheet" href="{{filePath}}">'
-          }
-        }
-      }
-    });
+    this.spawnCommand(taskRunner, ['wiredep']);
   }
 };
 

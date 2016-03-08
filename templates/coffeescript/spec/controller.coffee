@@ -6,6 +6,7 @@ describe 'Controller: <%= classedName %>Ctrl', ->
   beforeEach module '<%= scriptAppName %>'
 
   <%= classedName %>Ctrl = {}
+
   scope = {}
 
   # Initialize the controller and a mock scope
@@ -16,4 +17,4 @@ describe 'Controller: <%= classedName %>Ctrl', ->
     }
 
   it 'should attach a list of awesomeThings to the scope', ->
-    expect(scope.awesomeThings.length).toBe 3
+    expect(<%= classedName %>Ctrl.awesomeThings.length).toBe 3

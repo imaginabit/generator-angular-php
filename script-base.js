@@ -8,34 +8,44 @@ var chalk = require('chalk');
 var Generator = module.exports = function Generator() {
   yeoman.generators.NamedBase.apply(this, arguments);
 
+  var bowerJson = {};
+
   try {
-    this.appname = require(path.join(process.cwd(), 'bower.json')).name;
-  } catch (e) {
+    bowerJson = require(path.join(process.cwd(), 'bower.json'));
+  } catch (e) {}
+
+  if (bowerJson.name) {
+    this.appname = bowerJson.name;
+  } else {
     this.appname = path.basename(process.cwd());
   }
+
   this.appname = this._.slugify(this._.humanize(this.appname));
-  this.scriptAppName = this._.camelize(this.appname) + angularUtils.appName(this);
+
+  this.scriptAppName = bowerJson.moduleName || this._.camelize(this.appname) + angularUtils.appName(this);
 
   this.cameledName = this._.camelize(this.name);
   this.classedName = this._.classify(this.name);
 
   if (typeof this.env.options.appPath === 'undefined') {
-    this.env.options.appPath = this.options.appPath;
-
-    if (!this.env.options.appPath) {
-      try {
-        this.env.options.appPath = require(path.join(process.cwd(), 'bower.json')).appPath;
-      } catch (e) {}
-    }
-    this.env.options.appPath = this.env.options.appPath || 'app';
+    this.env.options.appPath = this.options.appPath || bowerJson.appPath || 'app';
     this.options.appPath = this.env.options.appPath;
   }
 
-  if (typeof this.env.options.testPath === 'undefined') {
-    try {
-      this.env.options.testPath = require(path.join(process.cwd(), 'bower.json')).testPath;
-    } catch (e) {}
-    this.env.options.testPath = this.env.options.testPath || 'test/spec';
+  this.env.options.testPath = this.env.options.testPath || bowerJson.testPath || 'test/spec';
+
+  this.env.options.typescript = this.options.typescript;
+  if (typeof this.env.options.typescript === 'undefined') {
+    this.option('typescript');
+
+    // attempt to detect if user is using TS or not
+    // if cml arg provided, use that; else look for the existence of ts
+    if (!this.options.typescript &&
+      this.expandFiles(path.join(this.env.options.appPath, '/scripts/**/*.ts'), {}).length > 0) {
+      this.options.typescript = true;
+    }
+
+    this.env.options.typescript = this.options.typescript;
   }
 
   this.env.options.coffee = this.options.coffee;
@@ -58,6 +68,11 @@ var Generator = module.exports = function Generator() {
   if (this.env.options.coffee) {
     sourceRoot = '/templates/coffeescript';
     this.scriptSuffix = '.coffee';
+  }
+
+  if (this.env.options.typescript) {
+    sourceRoot = '/templates/typescript';
+    this.scriptSuffix = '.ts';
   }
 
   this.sourceRoot(path.join(__dirname, sourceRoot));
