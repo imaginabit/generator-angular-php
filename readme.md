@@ -6,6 +6,11 @@
 [![Dependency Status](https://david-dm.org/amercier/generator-angular-php.svg)](https://david-dm.org/amercier/generator-angular-php)
 [![devDependency Status](https://david-dm.org/amercier/generator-angular-php/dev-status.svg)](https://david-dm.org/amercier/generator-angular-php#info=devDependencies)
 
+----
+[![Dependency Status](https://david-dm.org/amercier/generator-angular-php.svg)](https://david-dm.org/imaginabit/generator-angular-php)
+[![devDependency Status](https://david-dm.org/amercier/generator-angular-php/dev-status.svg)](https://david-dm.org/imaginabit/generator-angular-php#info=devDependencies)
+
+
 
 Based on [generator-angular](https://github.com/yeoman/generator-angular). Adds
 a `/app/api` folder containing a sample RESTful PHP API. The API is available under
