@@ -1,27 +1,27 @@
-# AngularJS generator [![Build Status](https://secure.travis-ci.org/yeoman/generator-angular.svg?branch=master)](http://travis-ci.org/yeoman/generator-angular) [![Gitter](https://img.shields.io/badge/Gitter-Join_the_Yeoman_chat_%E2%86%92-00d06f.svg)](https://gitter.im/yeoman/yeoman)
+# AngularJS generator with PHP
 
-> Yeoman generator for AngularJS - lets you quickly set up a project with sensible defaults and best practices.
+[![NPM version](https://badge.fury.io/js/generator-angular-php.svg)](http://badge.fury.io/js/generator-angular-php)
+[![Build Status](https://travis-ci.org/amercier/generator-angular-php.svg)](https://travis-ci.org/amercier/generator-angular-php)
+[![Code Climate](https://codeclimate.com/github/amercier/generator-angular-php/badges/gpa.svg)](https://codeclimate.com/github/amercier/generator-angular-php)
+[![Dependency Status](https://david-dm.org/amercier/generator-angular-php.svg)](https://david-dm.org/amercier/generator-angular-php)
+[![devDependency Status](https://david-dm.org/amercier/generator-angular-php/dev-status.svg)](https://david-dm.org/amercier/generator-angular-php#info=devDependencies)
 
-There are many starting points for building a new Angular single page app, in addition to this one. To see a comparison 
-of the popular options, have a look at 
-[this comparison](http://www.dancancro.com/comparison-of-angularjs-application-starters).
+
+Based on [generator-angular](https://github.com/yeoman/generator-angular). Adds
+a `/app/api` folder containing a sample RESTful PHP API. The API is available under
+`/api` URL. `During development, the PHP API is served by
+[PHP built-in web server](http://php.net/manual/en/features.commandline.webserver.php)
+and integrated seamlessly into the existing [connect](https://github.com/gruntjs/grunt-contrib-connect)
+configuration. Integration is done with [grunt-connect-proxy](https://github.com/drewzboto/grunt-connect-proxy)
+and [grunt-php](https://github.com/sindresorhus/grunt-php).
 
 [Roadmap for upcoming plans/features/fixes](https://github.com/yeoman/generator-angular/issues/553)
 
 ## Usage
 
-For step-by-step instructions on using Yeoman and this generator to build a TODO AngularJS application from scratch see [this tutorial.](http://yeoman.io/codelab/)
-
-Install `yo`, `grunt-cli`, `bower`, `generator-angular` and `generator-karma`:
+Install `generator-angular-php`:
 ```
-npm install -g grunt-cli bower yo generator-karma generator-angular
-```
-
-If you are planning on using Sass, you will need to first install Ruby and Compass:
-- Install Ruby by downloading from [here](http://rubyinstaller.org/downloads/) or use Homebrew
-- Install the compass gem:
-```
-gem install compass
+npm install -g generator-angular-php
 ```
 
 Make a new directory, and `cd` into it:
@@ -29,37 +29,41 @@ Make a new directory, and `cd` into it:
 mkdir my-new-project && cd $_
 ```
 
-Run `yo angular`, optionally passing an app name:
+Run `yo angular-php`, optionally passing an app name:
 ```
-yo angular [app-name]
+yo angular-php [app-name]
 ```
 
 Run `grunt` for building and `grunt serve` for preview
+
+In `app/api` directory, run `make install` to update Composer dependencies.
 
 
 ## Generators
 
 Available generators:
 
-* [angular](#app) (aka [angular:app](#app))
-* [angular:controller](#controller)
-* [angular:directive](#directive)
-* [angular:filter](#filter)
-* [angular:route](#route)
-* [angular:service](#service)
-* [angular:provider](#service)
-* [angular:factory](#service)
-* [angular:value](#service)
-* [angular:constant](#service)
-* [angular:decorator](#decorator)
-* [angular:view](#view)
+* [angular-php](#app) (aka [angular-php:app](#app))
+* [angular-php:controller](#controller)
+* [angular-php:directive](#directive)
+* [angular-php:filter](#filter)
+* [angular-php:route](#route)
+* [angular-php:service](#service)
+* [angular-php:provider](#service)
+* [angular-php:factory](#service)
+* [angular-php:value](#service)
+* [angular-php:constant](#service)
+* [angular-php:decorator](#decorator)
+* [angular-php:view](#view)
+
+**Note: Generators are to be run from the root directory of your app.**
 
 ### App
 Sets up a new AngularJS app, generating all the boilerplate you need to get started. The app generator also optionally installs Bootstrap and additional AngularJS modules, such as angular-resource (installed by default).
 
 Example:
 ```bash
-yo angular
+yo angular-php
 ```
 
 ### Route
@@ -67,7 +71,7 @@ Generates a controller and view, and configures a route in `app/scripts/app.js` 
 
 Example:
 ```bash
-yo angular:route myroute
+yo angular-php:route myroute
 ```
 
 Produces `app/scripts/controllers/myroute.js`:
@@ -86,7 +90,7 @@ Produces `app/views/myroute.html`:
 
 Example:
 ```bash
-yo angular:route myRoute --uri=my/route
+yo angular-php:route myRoute --uri=my/route
 ```
 
 Produces controller and view as above and adds a route to `app/scripts/app.js`
@@ -97,7 +101,7 @@ Generates a controller in `app/scripts/controllers`.
 
 Example:
 ```bash
-yo angular:controller user
+yo angular-php:controller user
 ```
 
 Produces `app/scripts/controllers/user.js`:
@@ -111,7 +115,7 @@ Generates a directive in `app/scripts/directives`.
 
 Example:
 ```bash
-yo angular:directive myDirective
+yo angular-php:directive myDirective
 ```
 
 Produces `app/scripts/directives/myDirective.js`:
@@ -132,7 +136,7 @@ Generates a filter in `app/scripts/filters`.
 
 Example:
 ```bash
-yo angular:filter myFilter
+yo angular-php:filter myFilter
 ```
 
 Produces `app/scripts/filters/myFilter.js`:
@@ -149,7 +153,7 @@ Generates an HTML view file in `app/views`.
 
 Example:
 ```bash
-yo angular:view user
+yo angular-php:view user
 ```
 
 Produces `app/views/user.html`:
@@ -162,7 +166,7 @@ Generates an AngularJS service.
 
 Example:
 ```bash
-yo angular:service myService
+yo angular-php:service myService
 ```
 
 Produces `app/scripts/services/myService.js`:
@@ -172,14 +176,14 @@ angular.module('myMod').service('myService', function () {
 });
 ```
 
-You can also do `yo angular:factory`, `yo angular:provider`, `yo angular:value`, and `yo angular:constant` for other types of services.
+You can also do `yo angular-php:factory`, `yo angular-php:provider`, `yo angular-php:value`, and `yo angular-php:constant` for other types of services.
 
 ### Decorator
 Generates an AngularJS service decorator.
 
 Example:
 ```bash
-yo angular:decorator serviceName
+yo angular-php:decorator serviceName
 ```
 
 Produces `app/scripts/decorators/serviceNameDecorator.js`:
@@ -195,12 +199,12 @@ angular.module('myMod').config(function ($provide) {
 ## Options
 In general, these options can be applied to any generator, though they only affect generators that produce scripts.
 
-### CoffeeScript and TypeScript
-For generators that output scripts, the `--coffee` option will output CoffeeScript instead of JavaScript, and `--typescript` will output TypeScript instead of JavaScript.
+### CoffeeScript
+For generators that output scripts, the `--coffee` option will output CoffeeScript instead of JavaScript.
 
 For example:
 ```bash
-yo angular:controller user --coffee
+yo angular-php:controller user --coffee
 ```
 
 Produces `app/scripts/controller/user.coffee`:
@@ -209,47 +213,36 @@ angular.module('myMod')
   .controller 'UserCtrl', ($scope) ->
 ```
 
-For example:
-```bash
-yo angular:controller user --typescript
-```
+A project can mix CoffeScript and JavaScript files.
 
-Produces `app/scripts/controller/user.ts`:
-```typescript
-/// <reference path="../app.ts" />
-
-'use strict';
-
-module demoApp {
-    export interface IUserScope extends ng.IScope {
-        awesomeThings: any[];
-    }
-    
-    export class UserCtrl {
-
-        constructor (private $scope:IUserScope) {
-	        $scope.awesomeThings = [
-              'HTML5 Boilerplate',
-              'AngularJS',
-              'Karma'
-            ];
-        }
-    }
-}
-
-angular.module('demoApp')
-  .controller('UserCtrl', demoApp.UserCtrl);
-```
+To output JavaScript files, even if CoffeeScript files exist (the default is to output CoffeeScript files if the generator finds any in the project), use `--coffee=false`.
 
 ### Minification Safe
 
-**tl;dr**: You don't need to write annotated code as the build step will
-handle it for you.
+**Removed**
+
+[Related Issue #452](https://github.com/yeoman/generator-angular/issues/452): This option has been removed from the generator. Initially it was needed as ngMin was not entirely stable. As it has matured, the need to keep separate versions of the script templates has led to extra complexity and maintenance of the generator. By removing these extra burdens, new features and bug fixes should be easier to implement. If you are dependent on this option, please take a look at ngMin and seriously consider implementing it in your own code. It will help reduce the amount of typing you have to do (and look through) as well as make your code cleaner to look at.
 
 By default, generators produce unannotated code. Without annotations, AngularJS's DI system will break when minified. Typically, these annotations that make minification safe are added automatically at build-time, after application files are concatenated, but before they are minified. The annotations are important because minified code will rename variables, making it impossible for AngularJS to infer module names based solely on function parameters.
 
-The recommended build process uses `ng-annotate`, a tool that automatically adds these annotations. However, if you'd rather not use it, you have to add these annotations manually yourself. Why would you do that though? If you find a bug
-in the annotated code, please file an issue at [ng-annotate](https://github.com/olov/ng-annotate/issues).
+The recommended build process uses `ngmin`, a tool that automatically adds these annotations. However, if you'd rather not use `ngmin`, you have to add these annotations manually yourself. **One thing to note is that `ngmin` does not produce minsafe code for things that are not main level elements like controller, services, providers, etc.:
+
+```javascript
+resolve: {
+  User: function(myService) {
+    return MyService();
+  }
+}
+```
+
+will need to be manually done like so:
+```javascript
+resolve: {
+  User: ['myService', function(myService) {
+    return MyService();
+  }]
+}
+```
 
 
 ### Add to Index
@@ -261,7 +254,7 @@ By default, new scripts are added to the index.html file. However, this may not 
 
 To skip adding them to the index, pass in the skip-add argument:
 ```bash
-yo angular:service serviceName --skip-add
+yo angular-php:service serviceName --skip-add
 ```
 
 ## Bower Components
@@ -270,26 +263,23 @@ The following packages are always installed by the [app](#app) generator:
 
 * angular
 * angular-mocks
+* angular-scenario
 
 
 The following additional modules are available as components on bower, and installable via `bower install`:
 
-* angular-animate
-* angular-aria
 * angular-cookies
-* angular-messages
+* angular-loader
 * angular-resource
 * angular-sanitize
 
 All of these can be updated with `bower update` as new versions of AngularJS are released.
 
-`json3` and `es5-shim` have been removed as Angular 1.3 has dropped IE8 support and that is the last version that needed these shims. If you still require these, you can include them with: `bower install --save json3 es5-shim`. `wiredep` should add them to your index.html file but if not you can manually add them.
-
 ## Configuration
 Yeoman generated projects can be further tweaked according to your needs by modifying project files appropriately.
 
 ### Output
-You can change the `app` directory by adding an `appPath` property to `bower.json`. For instance, if you wanted to easily integrate with Express.js, you could add the following:
+You can change the `app` directory by adding a `appPath` property to `bower.json`. For instance, if you wanted to easily integrate with Express.js, you could add the following:
 
 ```json
 {
@@ -301,11 +291,6 @@ You can change the `app` directory by adding an `appPath` property to `bower.jso
 
 ```
 This will cause Yeoman-generated client-side files to be placed in `public`.
-
-Note that you can also achieve the same results by adding an `--appPath` option when starting generator:
-```bash
-yo angular [app-name] --appPath=public
-```
 
 ## Testing
 
@@ -326,101 +311,6 @@ When submitting a new feature, add tests that cover the feature.
 ## Changelog
 
 Recent changes can be viewed on Github on the [Releases Page](https://github.com/yeoman/generator-angular/releases)
-
-## Sponsors
-Love Yeoman work and community? Help us keep it alive by donating funds to cover project expenses! <br />
-[[Become a sponsor](https://opencollective.com/yeoman#support)]
-
-  <a href="https://opencollective.com/yeoman/backers/0/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/0/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/1/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/1/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/2/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/2/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/3/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/3/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/4/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/4/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/5/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/5/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/6/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/6/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/7/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/7/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/8/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/8/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/9/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/9/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/10/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/10/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/11/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/11/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/12/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/12/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/13/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/13/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/14/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/14/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/15/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/15/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/16/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/16/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/17/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/17/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/18/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/18/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/19/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/19/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/20/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/20/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/21/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/21/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/22/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/22/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/23/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/23/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/24/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/24/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/25/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/25/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/26/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/26/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/27/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/27/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/28/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/28/avatar">
-  </a>
-  <a href="https://opencollective.com/yeoman/backers/29/website" target="_blank">
-    <img src="https://opencollective.com/yeoman/backers/29/avatar">
-  </a>
 
 ## License
 
